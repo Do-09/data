@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* CSS 스타일링 */
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        hr {
+            border: 1px solid #000;
+            margin-top: 20px;
+        }
+
+        .movie-info {
+            width: 400px;
+        }
+
+        .reservation-form {
+            width: 400px;
+            margin-left: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        #check-reservation {
+            float: left;
+            margin-left:20px;
+            
+        }
+    </style>
+    <script>
+        //영화선택시 그에 맞는 상영시간간 알려주는 함수
+        function updateShowtimes() {
+            var movieSelect = document.getElementById("movie");
+            var showtimeSelect = document.getElementById("showtime");
+            var selectedMovie = movieSelect.value;
+
+            var movieTable = document.getElementById("movie-info");
+            var showtimes = [];
+
+            var timeElements = movieTable.getElementsByClassName("time");
+            for (var i = 0; i < timeElements.length; i++) {
+                var row = timeElements[i].parentNode;
+                var movieName = row.cells[0].innerText;
+
+                if (movieName === selectedMovie) {
+                    showtimes.push(timeElements[i].innerText);
+                }
+            }
+
+            // 상영 시간 업데이트
+            showtimeSelect.innerHTML = "";
+            for (var j = 0; j < showtimes.length; j++) {
+                var option = document.createElement("option");
+                option.value = showtimes[j];
+                option.innerText = showtimes[j];
+                showtimeSelect.appendChild(option);
+            }
+        }
+        // 처음 창 열었을때도 시간값 표시되게함
+        window.onload = updateShowtimes;
+
+        function submitReservation() {
+            var selectedMovie = document.getElementById("movie").value;
+            var selectedShowtime = document.getElementById("showtime").value;
+            var name = document.getElementById("name").value;
+            var phoneNum = document.getElementById("phone-num").value;
+            var adult = document.getElementById("adult").value;
+            var teenager = document.getElementById("teenager").value;
+            var child = document.getElementById("child").value;
+
+            if (selectedMovie && selectedShowtime && name && phoneNum && adult && teenager && child) {
+                alert("영화 예약이 제출되었습니다.\n" +
+                    "영화: " + selectedMovie + "\n" +
+                    "상영 시간: " + selectedShowtime + "\n" +
+                    "이름: " + name + "\n" +
+                    "전화번호: " + phoneNum + "\n" +
+                    "성인 수: " + adult + "\n" +
+                    "청소년 수: " + teenager + "\n" +
+                    "유아 수: " + child);
+
+                //서버로 어떻게 전달하는지 몰라서 일단 이렇게 써놨습니다
+                var reservationData = {
+                    movie: selectedMovie,
+                    showtime: selectedShowtime,
+                    name: name,
+                    phoneNum: phoneNum,
+                    adult: adult,
+                    teenager: teenager,
+                    child: child
+                };
+
+                // 서버에 예약 데이터 전송 (AJAX 또는 fetch 등을 사용하여 서버에 POST 요청을 보내는 코드를 작성해야 합니다.)
+
+                // 예약 확인 및 결과 처리
+                checkReservation(reservationData);
+            } else {
+                alert("모든 필드를 입력해주세요.");
+            }
+        }
+
+        //서버에서 데이터 받는 함수인데, 어떤 방식으로 받는지 몰라서 gpt에서 나온방식 사용했습니다.
+        //XMLHttpRequest를 사용했다고 합니다.
+        function fetchReservation() {
+            var name = document.getElementById("check-name").value;
+            var phoneNum = document.getElementById("check-phone-num").value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var reservationData = JSON.parse(xhr.responseText);
+                        displayReservation(reservationData);
+                    } else {
+                        console.log("서버 요청 실패: " + xhr.status);
+                    }
+                }
+            };
+
+
+            xhr.open("POST", "/api/check-reservation");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify({ name: name, phoneNum: phoneNum }));
+        }
+
+        //예약내역 보여주는 함수 (alert로)
+        function displayReservation(reservationData) {
+            var reservationInfo = "예약 내역:\n";
+
+            for (var i = 0; i < reservationData.length; i++) {
+                var reservation = reservationData[i];
+                reservationInfo += "\n영화: " + reservation.movie +
+                    "\n상영 시간: " + reservation.showtime +
+                    "\n이름: " + reservation.name +
+                    "\n전화번호: " + reservation.phoneNum +
+                    "\n성인 수: " + reservation.adult +
+                    "\n청소년 수: " + reservation.teenager +
+                    "\n유아 수: " + reservation.child + "\n";
+            }
+
+            if (reservationData.length > 0) {
+                alert(reservationInfo);
+            } else {
+                alert("예약 내역이 없습니다.");
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <h1>영화관 예약 사이트</h1>
+    <hr>
+    <div class="container">
+        <div id="movie-info">
+            <h3>영화 정보</h3>
+            <table>
+                <tr>
+                    <th>영화 제목</th>
+                    <th>상영관</th>
+                    <th>시간</th>
+                </tr>
+                <tr>
+                    <td>영화1</td>
+                    <td>상영관1</td>
+                    <td class="time">10:00</td>
+                </tr>
+                <tr>
+                    <td>영화1</td>
+                    <td>상영관2</td>
+                    <td class="time">13:00</td>
+                </tr>
+                <tr>
+                    <td>영화1</td>
+                    <td>상영관3</td>
+                    <td class="time">20:00</td>
+                </tr>
+                <tr>
+                    <td>영화2</td>
+                    <td>상영관1</td>
+                    <td class="time">13:00</td>
+                </tr>
+                <tr>
+                    <td>영화3</td>
+                    <td>상영관1</td>
+                    <td class="time">16:00</td>
+                </tr>
+                <tr>
+                    <td>영화3</td>
+                    <td>상영관2</td>
+                    <td class="time">19:00</td>
+                </tr>
+            </table>
+        </div>
+        <div class="reservation-form">
+            <h3>영화 예약</h3>
+            <div class="form-group">
+                <label for="movie">영화 선택:</label>
+                <select id="movie" onchange="updateShowtimes()">
+                    <option value="영화1">영화1</option>
+                    <option value="영화2">영화2</option>
+                    <option value="영화3">영화3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="showtime">상영 시간:</label>
+                <select id="showtime"></select>
+            </div>
+            <div class="form-group">
+                <label for="name">이름:</label>
+                <input type="text" id="name">
+            </div>
+            <div class="form-group">
+                <label for="phone-num">전화번호:</label>
+                <input type="text" id="phone-num">
+            </div>
+            <div class="form-group">
+                <label for="adult">성인 수:</label>
+                <input type="number" min="0" id="adult">
+            </div>
+            <div class="form-group">
+                <label for="teenager">청소년 수:</label>
+                <input type="number" min="0" id="teenager">
+            </div>
+            <div class="form-group">
+                <label for="child">유아 수:</label>
+                <input type="number" min="0" id="child">
+            </div>
+            <button onclick="submitReservation()">제출</button>
+        </div>
+    </div>
+    <div id="check-reservation">
+        <h3>예약 내역 확인</h3>
+        <div class="form-group">
+            <label for="check-name">이름:</label>
+            <input type="text" id="check-name">
+        </div>
+        <div class="form-group">
+            <label for="check-phone-num">전화번호:</label>
+            <input type="text" id="check-phone-num">
+        </div>
+        <button onclick="fetchReservation()">예약 내역 확인</button>
+    </div>

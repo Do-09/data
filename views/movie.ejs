@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* CSS 스타일링 */
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        hr {
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+
+        .movie-info {
+            width: 400px;
+        }
+
+        .reservation-form {
+            width: 400px;
+            margin-left: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th{
+            border: 1px solid #000;
+            padding: 8px;
+            background-color:lightgrey;
+        }
+
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        #check-reservation {
+            float: left;
+            margin-left:20px;          
+        }
+
+        #resTable {
+            width: 280px;
+            font-size: 15px; 
+            text-align: center;
+        }
+
+        #res {
+            font-size: 15px; 
+            width: 280px;
+            height: 40px;
+            background-color: black;
+            color: white;  
+            border: 2px solid black;
+        }
+
+        #checkTable {
+            width: 300px;
+            font-size: 15px; 
+            text-align: center;
+        }
+
+        #check {
+            font-size: 15px; 
+            width: 300px;
+            height: 40px;
+            background-color: black;
+            color: white;  
+            border: 2px solid black;
+        }
+
+        #result{
+            font-size: 15px; 
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>영화관 예약 사이트</h1>
+    <hr>
+    <form action="/" method="post">
+    <div class="container">
+        <div id="movie-info">
+            <h3>상영시간표</h3>
+            <table>
+                <tr>
+                    <th>영화 선택</th>
+                    <th>영화 제목</th>
+                    <th>상영관</th>
+                    <th>시간</th>
+                    <th>잔여좌석</th>
+                    <th>전체좌석</th>
+                    <th>가격</th>
+                </tr>
+                <tr>
+                    <% for(var i = 0; i<data.length;i++){%>
+                    <%var info = data[i]%>
+                    <td style="text-align: center;"><input type="radio" name = "id" value="<%=info.id%>"></td>
+                    <td><%=info.title%></td>
+                    <td style="text-align: center;"><%=info.place%></td>
+                    <td class="time"><%=info.time%></td>
+                    <td style="text-align: center;"><%=info.capable%></td>
+                    <td style="text-align: center;"><%=info.total%></td>
+                    <td><%=info.price%></td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+
+        <div class="reservation-form">
+            <h3>영화 예약</h3>
+            <table class="form-group" id="resTable">
+                <tr>
+                    <th>이름</th>
+                    <td><input type="text" name="name"></td>
+                </tr>
+                <tr>
+                    <th>전화번호</th>
+                    <td><input type="text" name="phone"></td>
+                </tr>
+                <tr>
+                    <th>비밀번호</th>
+                    <td><input type="password" name="password"></td>
+                </tr>
+                <tr>
+                    <th>사람 수</th>
+                    <td><input type="password" name="people"></td>
+                </tr>
+            </table>
+            <input type="submit" id="res">
+        </div>
+    </div>
+    </form>
+
+    <div class="container">
+        <div style="margin-left: 200px;">
+            <h3>예약 내역 확인</h3>
+            <form action="/check" method="post">
+                <table class="form-group" id="checkTable">
+                    <tr>
+                        <th>이름</th>
+                        <td><input type="text" name="name"></td>
+                    </tr>
+                    <tr>
+                        <th>전화번호</th>
+                        <td><input type="text" name="phone"></td>
+                    </tr>
+                    <tr>
+                        <th>비밀번호</th>
+                        <td><input type="password" name="password"></td>
+                    </tr>
+                </table>
+                <button type="submit" id = "check">예약 내역 확인</button>
+            </form>
+        </div>
+
+        <div style="margin-left: 50px;">
+            <% if(check){%>
+            <h3>예약 내역</h3>
+            <table id="result">
+                <tr>
+                    <th>이름</th>
+                    <th>전화번호</th>
+                    <th>영화 제목</th>
+                    <th>상영관</th>
+                    <th>시간</th>
+                    <th>사람 수</th>
+                    <th>가격</th>
+                </tr>
+                <tr>
+                    <% for(var i = 0; i<check.length;i++){%>
+                        <% var res = check[i] %>
+                        <td><%= res.name %></td>
+                        <td><%= res.phone %></td>
+                        <td><%= res.title %></td>
+                        <td><%= res.place %></td>
+                        <td><%= res.time %></td>
+                        <td><%= res.people %></td>
+                        <td><%= res.price %></td>
+                    <%}%>
+                </tr>
+            <%}%>
+            </table>
+        </div>
+    </div>
+   
+</body>
+</html>
