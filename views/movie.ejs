@@ -126,7 +126,7 @@
                 <tr>
                     <% for(var i = 0; i<data.length;i++){%>
                     <%var info = data[i]%>
-                    <td style="text-align: center;"><input type="radio" name = "id" value="<%=info.id%>"></td>
+                    <td style="text-align: center;"><input type="radio" name = "id" value="<%=info.movieID%>"></td>
                     <td><%=info.title%></td>
                     <td style="text-align: center;"><%=info.place%></td>
                     <td class="time"><%=info.time%></td>
@@ -158,7 +158,7 @@
                     <td><input type="number" min="1" name="people"></td>
                 </tr>
             </table>
-            <input type="submit" id="res">
+            <button type="submit" id="res">예약</button>
         </div>
     </div>
     </form>
@@ -208,9 +208,9 @@
                     <td><%= res.place %></td>
                     <td><%= res.time %></td>
                     <td><%= res.people %></td>
-                    <td><%= res.price %></td>
+                    <td><%= res.totalPrice %></td>
                     <form action="/cancel" method="post">
-                    <td><input type="checkbox" name = "id" value="<%=res.id%>"></td>                 
+                    <td><input type="checkbox" name = "id" value="<%=res.id%>"></td>            
                     </tr>
                 <%}%>               
             </table>
