@@ -90,8 +90,18 @@
         }
 
         #result{
+            width: 800px;
             font-size: 15px; 
             text-align: center;
+        }
+
+        #cancel{
+            width: 800px;
+            height: 40px;
+            font-size: 15px; 
+            background-color: black;
+            color: white;  
+            border: 2px solid black;
         }
     </style>
 </head>
@@ -145,7 +155,7 @@
                 </tr>
                 <tr>
                     <th>사람 수</th>
-                    <td><input type="password" name="people"></td>
+                    <td><input type="number" min="1" name="people"></td>
                 </tr>
             </table>
             <input type="submit" id="res">
@@ -154,7 +164,7 @@
     </form>
 
     <div class="container">
-        <div style="margin-left: 200px;">
+        <div style="margin-left: 90px;">
             <h3>예약 내역 확인</h3>
             <form action="/check" method="post">
                 <table class="form-group" id="checkTable">
@@ -178,7 +188,7 @@
         <div style="margin-left: 50px;">
             <% if(check){%>
             <h3>예약 내역</h3>
-            <table id="result">
+            <table class="form-group" id="result">
                 <tr>
                     <th>이름</th>
                     <th>전화번호</th>
@@ -187,21 +197,26 @@
                     <th>시간</th>
                     <th>사람 수</th>
                     <th>가격</th>
+                    <th>선택</th>
                 </tr>
-                <tr>
-                    <% for(var i = 0; i<check.length;i++){%>
-                        <% var res = check[i] %>
-                        <td><%= res.name %></td>
-                        <td><%= res.phone %></td>
-                        <td><%= res.title %></td>
-                        <td><%= res.place %></td>
-                        <td><%= res.time %></td>
-                        <td><%= res.people %></td>
-                        <td><%= res.price %></td>
-                    <%}%>
-                </tr>
-            <%}%>
+                <% for(var i = 0; i<check.length;i++){%>
+                    <tr>
+                    <% var res = check[i] %>
+                    <td><%= res.name %></td>
+                    <td><%= res.phone %></td>
+                    <td><%= res.title %></td>
+                    <td><%= res.place %></td>
+                    <td><%= res.time %></td>
+                    <td><%= res.people %></td>
+                    <td><%= res.price %></td>
+                    <form action="/cancel" method="post">
+                    <td><input type="checkbox" name = "id" value="<%=res.id%>"></td>                 
+                    </tr>
+                <%}%>               
             </table>
+            <button type="submit" id = "cancel">예약 취소</button>
+            <%}%>
+        </form>
         </div>
     </div>
    
